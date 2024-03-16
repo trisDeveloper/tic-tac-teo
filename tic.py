@@ -1,3 +1,6 @@
+import random
+
+
 def print_tem(tem):
     for row in tem:
         print("|", " | ".join(row), "|")
@@ -32,12 +35,38 @@ def is_tem_full(tem):
 def play_move(tem, player):
     while True:
         try:
-            row, col = map(
-                int,
-                input(
-                    f"Player {player}, enter row and column (e.g., 0 0 for top left): "
-                ).split(),
-            )
+            if player == "X":
+                row, col = map(
+                    int,
+                    input(
+                        "your turn, enter row and column (e.g., 0 0 for top left): "
+                    ).split(),
+                )
+            else:
+                print("computer's turn:")
+                # check if computer can win in the next move
+                for i in range(3):
+                    for j in range(3):
+                        if tem[i][j] == " ":
+                            tem[i][j] = player
+                            if winner(tem, player):
+                                return
+                            tem[i][j] = " "
+                # check if player can win in the next move
+                for i in range(3):
+                    for j in range(3):
+                        if tem[i][j] == " ":
+                            tem[i][j] = "X"
+                            if winner(tem, "X"):
+                                tem[i][j] = player
+                                return
+                            tem[i][j] = " "
+                while True:
+                    row, col = random.randint(0, 2), random.randint(0, 2)
+                    if tem[row][col] == " ":
+                        tem[row][col] = player
+                        break
+                break
             if tem[row][col] == " ":
                 tem[row][col] = player
                 break
@@ -58,8 +87,12 @@ def play_game():
         play_move(tem, current_player)
         if winner(tem, current_player):
             print_tem(tem)
-            print(f"Player {current_player} wins!")
-            break
+            if current_player == "X":
+                print(f"You wins!")
+                break
+            else:
+                print(f"Computer wins!")
+                break
         elif is_tem_full(tem):
             print_tem(tem)
             print("It's a tie :(")
